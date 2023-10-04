@@ -31,7 +31,14 @@ const CreateStoreModal = () => {
       setLoading(true);
 
       const response = await axios.post(`/api/stores`, values);
-      toast.success('새로운 스토어를 생성 했습니다.')
+
+      // the reason not using router from next navigation:
+      // window.location.assign() is going to completely refresh page 
+      // meaning that this store i just created after refresh  is going to 100% loaded in the database
+      // but if i use router from next navigation, at least my case, what happen was is database is simply not ready, data not sync.
+      // and the modal to create store opened on the dashboard page. 
+      window.location.assign(`/${response.data.id}`);
+      
     } catch (error) {
       console.log(error); 
       toast.error('스토어를 생성 할수 없습니다.');
