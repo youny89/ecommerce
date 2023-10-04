@@ -13,6 +13,11 @@ const MainNav = ({
 
     const routes = [
         {
+            href:`/${params.storeId}`,
+            label:"대시보드",
+            active:pathname === `/${params.storeId}`
+        },
+        {
             href:`/${params.storeId}/settings`,
             label:"설정",
             active:pathname === `/${params.storeId}/settings`

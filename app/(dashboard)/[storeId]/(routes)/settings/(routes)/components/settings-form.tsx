@@ -15,6 +15,9 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input'
 import toast from 'react-hot-toast'
 import axios from 'axios'
+import { AlertModal } from '@/components/modals/alert-modal'
+import { ApiAlert } from '@/components/ui/api-alert'
+import { useOrigin } from '@/hooks/use-origin'
 
 interface SettingFormProps {
     initialData: Store
@@ -31,7 +34,7 @@ const SettingsForm = ({ initialData }: SettingFormProps) => {
     const router = useRouter();
     const [open, setOpen] = useState(false)
     const [loading, setLoading] = useState(false)
-
+    const origin = useOrigin();
     const form = useForm<SettingFormValues>({
         resolver: zodResolver(formSchema),
         defaultValues:initialData
@@ -51,7 +54,23 @@ const SettingsForm = ({ initialData }: SettingFormProps) => {
         }
     }
 
+    const onDelete = async () => {
+        try {
+            setLoading(true)
+            await axios.delete(`/api/stores/${params.storeId}`)
+            router.refresh()
+            router.push('/');
+            toast.success('스토어 삭제 완료.')
+        } catch (error) {
+            toast.error('현재 스토어에 있는 모든 카테고리 및 상품들을 삭제 해주세요.')
+        } finally {
+            setLoading(false)
+            setOpen(false)
+        }
+    }
+
     return (<>
+        <AlertModal isOpen={open} loading={loading} onClose={()=> setOpen(false)} onConfirm={onDelete}/>
         <div className="flex items-center justify-between">
             <Heading 
                 title="설정"
@@ -93,6 +112,14 @@ const SettingsForm = ({ initialData }: SettingFormProps) => {
                 <Button type='submit' disabled={loading} className='ml-auto'>수정하기</Button>
             </form>
         </Form>
+
+        <Separator />
+
+        <ApiAlert
+            title='NEXT_PUBLIC_API_URL'
+            description={`${origin}/api/${params.storeId}`}
+            variant='public'
+            />
     </>)
 }
 
