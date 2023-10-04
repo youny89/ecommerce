@@ -18,6 +18,11 @@ const MainNav = ({
             active:pathname === `/${params.storeId}`
         },
         {
+            href:`/${params.storeId}/billboards`,
+            label:"빌보드",
+            active:pathname === `/${params.storeId}/billboard`
+        },
+        {
             href:`/${params.storeId}/settings`,
             label:"설정",
             active:pathname === `/${params.storeId}/settings`
