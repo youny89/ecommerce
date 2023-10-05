@@ -16,7 +16,6 @@ import { Input } from '@/components/ui/input'
 import toast from 'react-hot-toast'
 import axios from 'axios'
 import { AlertModal } from '@/components/modals/alert-modal'
-import { useOrigin } from '@/hooks/use-origin'
 import ImageUpload from '@/components/image-upload'
 
 interface BillboardFormProps {
@@ -35,7 +34,6 @@ const BillboardForm = ({ initialData }: BillboardFormProps) => {
     const router = useRouter();
     const [open, setOpen] = useState(false)
     const [loading, setLoading] = useState(false)
-    const origin = useOrigin();
 
     const form = useForm<BillboardFormValues>({
         resolver: zodResolver(formSchema),
@@ -62,6 +60,7 @@ const BillboardForm = ({ initialData }: BillboardFormProps) => {
             }
 
             router.refresh();
+            router.push(`/${params.storeId}/billboards`);
             toast.success(toastMessage)
         } catch (error) {
             toast.error('서버 에러')
