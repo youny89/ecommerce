@@ -74,7 +74,7 @@ const BillboardForm = ({ initialData }: BillboardFormProps) => {
             setLoading(true)
             await axios.delete(`/api/${params.storeId}/billboards/${params.billboardId}`)
             router.refresh()
-            router.push('/');
+            router.push(`/${params.storeId}/billboards`);
             toast.success('빌보드 삭제 완료.')
         } catch (error) {
             toast.error('현재 빌보드에서 사용 중인 카테고리를 삭제 해주세요 .')
