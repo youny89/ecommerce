@@ -28,6 +28,11 @@ const MainNav = ({
             active:pathname === `/${params.storeId}/categories`
         },
         {
+            href:`/${params.storeId}/sizes`,
+            label:"사이즈",
+            active:pathname === `/${params.storeId}/sizes`
+        },
+        {
             href:`/${params.storeId}/settings`,
             label:"설정",
             active:pathname === `/${params.storeId}/settings`
