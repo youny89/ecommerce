@@ -23,6 +23,11 @@ const MainNav = ({
             active:pathname === `/${params.storeId}/billboards`
         },
         {
+            href:`/${params.storeId}/categories`,
+            label:"카테고리",
+            active:pathname === `/${params.storeId}/categories`
+        },
+        {
             href:`/${params.storeId}/settings`,
             label:"설정",
             active:pathname === `/${params.storeId}/settings`

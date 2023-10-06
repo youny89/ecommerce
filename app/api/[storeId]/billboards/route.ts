@@ -4,6 +4,7 @@ import prismadb from "@/lib/prismadb";
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server"
 
+// 빌보드 생성
 export async function POST(
     req: Request,
     { params }: { params : { storeId: string }}
@@ -40,6 +41,7 @@ export async function POST(
         return new NextResponse('Intenal Error',{ status: 500});
     }
 }
+
 
 export async function GET (
     req:Request,

@@ -47,7 +47,7 @@ const BillboardForm = ({ initialData }: BillboardFormProps) => {
     const title = initialData ? '빌보드 수정':'빌보드 만들기';
     const description = initialData ? '빌보드를 수정하세요':'새로운 빌보드를 만드세요.';
     const toastMessage = initialData ? '빌보드 수정 완료.':'빌보드 생성 완료.';
-    const action = initialData ? '업데이트.':'빌보드 만들기.';
+    const action = initialData ? '업데이트':'빌보드 만들기';
 
 
     const onSubmit = async (values: BillboardFormValues) => {
