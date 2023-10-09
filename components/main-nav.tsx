@@ -33,6 +33,11 @@ const MainNav = ({
             active:pathname === `/${params.storeId}/sizes`
         },
         {
+            href:`/${params.storeId}/colors`,
+            label:"색상",
+            active:pathname === `/${params.storeId}/colors`
+        },
+        {
             href:`/${params.storeId}/settings`,
             label:"설정",
             active:pathname === `/${params.storeId}/settings`
