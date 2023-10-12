@@ -82,7 +82,7 @@ const ProductForm:React.FC<ProductFormProps> = ({
 
     const onSubmit = async (values:z.infer<typeof formSchema>) => {
         try {
-            setLoading(false)
+            setLoading(true)
             if(initialData) {
                 await axios.patch(`/api/${params.storeId}/products/${params.productId}`,values)
             }else {
@@ -95,7 +95,7 @@ const ProductForm:React.FC<ProductFormProps> = ({
         } catch (error) {
             toast.error('서버 에러')
         } finally{
-            setLoading(true)
+            setLoading(false)
         }
     }
 

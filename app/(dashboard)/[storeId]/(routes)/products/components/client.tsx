@@ -21,7 +21,7 @@ const ProductsClient:React.FC<ProductsClientProps> = ({data}) => {
     return (
         <>
             <div className="flex items-center justify-between">
-                <Heading title={`상품 (0개)`} description="상품을 추가/수정/삭제 관리하세요"/>
+                <Heading title={`상품 (${data.length}개)`} description="상품을 추가/수정/삭제 관리하세요"/>
                 <Button onClick={()=> router.push(`/${params.storeId}/products/new`)}>
                     <Plus className="h-4 w-4 mr-2"/>
                     상품 추가하기

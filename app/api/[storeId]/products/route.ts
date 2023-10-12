@@ -2,6 +2,35 @@ import prismadb from "@/lib/prismadb";
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 
+export async function GET (
+    req:Request,
+    { params } : { params: { storeId: string }}
+) {
+    try {
+        if(!params.storeId) return new NextResponse('Store ID is missing',{status:400})
+
+
+        // TODO: filtering by (category, size, color, featured )
+        const products = await prismadb.product.findMany({
+            where: {
+                storeId: params.storeId,
+                isArchived: false
+            },
+            include:{
+                images:true,
+                category: true,
+                color: true,
+                size:true
+            }
+        })
+
+        return NextResponse.json(products);
+    } catch (error) {
+        console.log('[PRODUCT_GET]',error)
+        return new NextResponse('Internal Error',{status:500})
+    }
+}
+
 export async function POST (
     req:Request,
     { params }: { params: { storeId:string}}
