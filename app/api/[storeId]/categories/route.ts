@@ -29,12 +29,12 @@ export async function POST (
     try {
         const { userId } = auth();
         const body = await req.json()
-        const { name } = body;
+        const { name, billboardId } = body;
 
         if(!userId) return new NextResponse('Unauthenticated',{status: 401});
         if(!name) return new NextResponse('Name field is missing',{status: 400});
         if(!params.storeId) return new NextResponse('Store ID is missing',{status: 400});
-
+        if(!billboardId) return new NextResponse('Billboard ID is missing',{status:400});
 
         const storebyUserId = await prismadb.store.findUnique({
             where : {
@@ -47,7 +47,8 @@ export async function POST (
         const category = await prismadb.category.create({
             data : { 
                 name,
-                storeId : params.storeId
+                storeId : params.storeId,
+                billboardId
             }
         })
 

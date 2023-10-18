@@ -3,7 +3,7 @@
 import * as z from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Heading } from "@/components/ui/Heading"
-import { Category } from "@prisma/client"
+import { Billboard, Category } from "@prisma/client"
 import { Button } from '@/components/ui/button'
 import { Trash } from 'lucide-react'
 import { useState } from 'react'
@@ -14,18 +14,21 @@ import { Input } from '@/components/ui/input'
 import toast from 'react-hot-toast'
 import axios from 'axios'
 import { useParams, useRouter } from 'next/navigation'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 interface CategoryFormProps {
     initialData: Category | null
+    billboards: Billboard[]
 }
 
 const formSchema = z.object({
-    name:z.string().min(1)
+    name:z.string().min(1),
+    billboardId:z.string().min(1)
 })
 
 type CategoryFormValus = z.infer<typeof formSchema> 
 
-const CategoryForm = ({ initialData }: CategoryFormProps ) => {
+const CategoryForm = ({ initialData,billboards }: CategoryFormProps ) => {
     const params = useParams();
     const router = useRouter();
 
@@ -34,7 +37,8 @@ const CategoryForm = ({ initialData }: CategoryFormProps ) => {
     const form = useForm<CategoryFormValus>({
         resolver: zodResolver(formSchema),
         defaultValues: initialData || {
-            name:""
+            name:"",
+            billboardId:""
         }
     });
 
@@ -81,23 +85,52 @@ const CategoryForm = ({ initialData }: CategoryFormProps ) => {
             
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className='w-full space-y-8'>
-                    <FormField 
-                        control={form.control}
-                        name='name'
-                        render={({field})=> (
-                            <FormItem>
-                                <FormLabel>카테고리 이름</FormLabel>
-                                <FormControl>
-                                    <Input 
-                                        {...field}
-                                        placeholder='카테고리 이름을 입력해주세요'
-                                        disabled={loading}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                    <div className='md:grid md:grid-cols-3 gap-8'>
+
+                        <FormField 
+                            control={form.control}
+                            name='name'
+                            render={({field})=> (
+                                <FormItem>
+                                    <FormLabel>카테고리 이름</FormLabel>
+                                    <FormControl>
+                                        <Input 
+                                            {...field}
+                                            placeholder='카테고리 이름을 입력해주세요'
+                                            disabled={loading}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField 
+                            control={form.control}
+                            name='billboardId'
+                            render={({field})=> (
+                                <FormItem>
+                                    <FormLabel>빌보드</FormLabel>
+                                    <Select disabled={loading} onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue defaultValue={field.value} placeholder="빌보드를 선택해주세요"/>
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            {billboards?.map(billboard=>(
+                                                <SelectItem key={billboard.id} value={billboard.id}>
+                                                    {billboard.label}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                    </div>
                     <Button type='submit' disabled={loading} className='ml-auto'>{action}</Button>
                 </form>
             </Form>

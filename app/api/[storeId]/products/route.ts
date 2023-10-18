@@ -8,12 +8,20 @@ export async function GET (
 ) {
     try {
         if(!params.storeId) return new NextResponse('Store ID is missing',{status:400})
+        const { searchParams } = new URL(req.url);
+        const categoryId = searchParams.get('categoryId') || undefined;
+        const sizeId = searchParams.get('sizeId') || undefined;
+        const colorId = searchParams.get('colorId') || undefined;
+        const isFeatured = searchParams.get('isFeatured');
 
 
-        // TODO: filtering by (category, size, color, featured )
         const products = await prismadb.product.findMany({
             where: {
                 storeId: params.storeId,
+                categoryId,
+                sizeId,
+                colorId,
+                isFeatured: isFeatured? true: false,
                 isArchived: false
             },
             include:{

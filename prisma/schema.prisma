@@ -34,7 +34,9 @@ model Billboard {
 
   storeId       String      @db.ObjectId
   store         Store       @relation("StoreToBillboard", fields: [storeId], references: [id])
-  
+
+  categories    Category[]
+
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 
@@ -46,6 +48,9 @@ model Category {
 
   storeId       String      @db.ObjectId      
   store         Store       @relation("StoreToCategory", fields:[storeId], references: [id])
+
+  billboardId   String      @db.ObjectId
+  billboard     Billboard   @relation(fields: [billboardId], references: [id])
 
   products      Product[]   @relation("CategoryToProduct")
 
@@ -60,6 +65,8 @@ model Size {
 
   storeId       String      @db.ObjectId
   store         Store       @relation("StoreToSize", fields: [storeId], references: [id])
+
+  
 
   products      Product[]
 
