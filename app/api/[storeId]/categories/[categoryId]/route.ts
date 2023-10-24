@@ -11,11 +11,11 @@ export async function GET (
     try {
         if(!params.storeId) return new NextResponse('Store ID is missing',{status:400})
         if(!params.categoryId) return new NextResponse('Category ID is missing',{status:400})
-
-        const category = await prismadb.category.findMany({
-            where: { id: params.categoryId }
+        const category = await prismadb.category.findFirst({
+            where: { id: params.categoryId },
+            include:{ billboard: true }
         });
-
+        console.log('category: ',category);
         return NextResponse.json(category);
     } catch (error) {
         console.log('[CATEGORY_ID_GET]',error)

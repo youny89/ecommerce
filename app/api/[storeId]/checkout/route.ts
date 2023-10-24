@@ -1,0 +1,79 @@
+import Stripe from 'stripe'
+
+
+import { stripe } from '@/lib/stripe'
+import prismadb from '@/lib/prismadb'
+import { NextResponse } from 'next/server'
+
+const corsHeader = {
+    "Access-Control-Allow-Origin":"*",
+    "Access-Control-Allow-Methods":"GET, POST, PUT, DELETE, OPTIONS",
+    "Access-Control-Allow-Headers":"Content-Type, Authorization",
+}
+
+// before post reqeust, we have to do this options reqeust.
+export async function OPTIONS () {
+    return NextResponse.json({}, { headers: corsHeader});
+}
+
+export async function POST (
+    req: Request,
+    { params } : { params : { storeId: string}}
+) {
+    const { productIds } = await req.json();
+
+    if(!productIds || productIds.length === 0 ) return new NextResponse('Product Ids is missing', {status:400})
+
+    const products = await prismadb.product.findMany({
+        where: { id: { in: productIds }}
+    });
+
+    const line_items:Stripe.Checkout.SessionCreateParams.LineItem[] = [];
+    products.forEach(product=> {
+        line_items.push({
+            quantity:1,
+            price_data: {
+                currency:"krw",
+                product_data: {
+                    name: product.name
+                },
+                unit_amount: product.price
+            }
+        })
+    })
+    console.log('line_items : ',line_items);
+    const order= await prismadb.order.create({
+        data: {
+            storeId: params.storeId,
+            isPaid: false,
+            orderItems: {
+                create: productIds.map((productId:string)=>({
+                    product: { 
+                        connect: {
+                            id: productId
+                        }
+                    }
+                }))
+            }
+        }
+    })
+    console.log('order: ', order);
+    const session = await stripe.checkout.sessions.create({
+        line_items,
+        mode:"payment",
+        billing_address_collection:"required",
+        phone_number_collection: { enabled: true },
+        success_url:`${process.env.FRONTEND_STORE_URL}/cart?success=1`,
+        cancel_url:`${process.env.FRONTEND_STORE_URL}/cart?canceled=1`,
+        metadata: {
+            // i gonna use this metadata after we add webhook
+            // so once a user paid, we gonna load this session data, and use this matadata to find order which we just created,
+            // and then we gonna change isPaid status to true from false
+            orderId: order.id
+        }
+    })
+
+    console.log('session: ',session);
+
+    return NextResponse.json({url: session.url}, { headers: corsHeader})
+}
